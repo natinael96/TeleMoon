@@ -327,3 +327,11 @@ test("CSP header includes voxide connect endpoints", async () => {
   assert.match(res.headers["content-security-policy"], /wss:\/\/voxide\.onrender\.com/);
 });
 
+test("botUsername is reported in public-status and status", async () => {
+  const pub = await request(app).get("/api/public-status").expect(200);
+  assert.equal(pub.body.botUsername, "Telemoon2bot");
+
+  const st = await request(app).get("/api/status").set(bearer(owner.token)).expect(200);
+  assert.equal(st.body.botUsername, "Telemoon2bot");
+});
+

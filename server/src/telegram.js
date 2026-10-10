@@ -20,6 +20,7 @@ export const tg = {
   client: null,
   ready: false, // Telegram client authenticated; users pair channels separately
   mode: null, // "bot" | "user"
+  botUsername: cfg.botUsername,
   error: null,
   channels: new Map(), // storage id -> resolved Telegram entity
 };

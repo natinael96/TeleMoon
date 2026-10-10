@@ -23,6 +23,7 @@ export const cfg = {
   apiId: num(process.env.TG_API_ID, 0),
   apiHash: process.env.TG_API_HASH || "",
   botToken: process.env.TG_BOT_TOKEN || "",
+  botUsername: process.env.TG_BOT_USERNAME || "Telemoon2bot",
   session: process.env.TG_SESSION || "", // optional: reuse a saved session (or a premium user session)
   channel: process.env.TG_CHANNEL_ID || "", // "-100xxxxxxxxxx" or "@username"
 

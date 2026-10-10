@@ -4,7 +4,7 @@ import { decryptBlob } from "./crypto.js";
 import {
   Crescent, MoonProgress, iconFor, UploadIcon, PlusIcon, SearchIcon,
   DownloadIcon, TrashIcon, EditIcon, XIcon, LogoutIcon, ChevR, ShareIcon,
-  RestoreIcon, FolderIcon, MoveIcon, LockIcon, ShieldIcon,
+  RestoreIcon, FolderIcon, MoveIcon, LockIcon, ShieldIcon, TelegramIcon,
 } from "./icons.jsx";
 import { VoxideAssistant, VoxideTelemetryBadge } from "./VoxideAssistant.jsx";
 
@@ -500,6 +500,8 @@ export default function Drive({ user, onLogout, onStorage }) {
   const [uploads, setUploads] = useState([]); // {key,name,pct,part,parts,status,handle}
   const [preview, setPreview] = useState(null);
   const [status, setStatus] = useState(null);
+  const botHandle = status?.botUsername ? `@${status.botUsername.replace(/^@/, "")}` : "@Telemoon2bot";
+  const botUrl = `https://t.me/${botHandle.replace(/^@/, "")}`;
   const [dragOver, setDragOver] = useState(false);
   const fileInput = useRef(null);
   const folderInput = useRef(null);
@@ -878,6 +880,16 @@ export default function Drive({ user, onLogout, onStorage }) {
               <button className="btn" onClick={() => { setQ(""); setTrashMode(true); }}><TrashIcon /> Trash</button>
             </>
           )}
+          <a
+            href={botUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn ghost bot-top-link"
+            title={`Telegram Bot: ${botHandle}`}
+          >
+            <TelegramIcon size={14} />
+            <span className="bot-top-label">{botHandle}</span>
+          </a>
           <input ref={resumeInput} type="file" hidden onChange={(e) => {
             const file = e.target.files?.[0];
             if (file && resumeTarget.current) continueUpload(resumeTarget.current, file);
@@ -1008,6 +1020,16 @@ export default function Drive({ user, onLogout, onStorage }) {
         {status?.telegram === "connected"
           ? <><span>MTPROTO ONLINE</span> · Channel: <b>{status.channel}</b> · Chunk: {fmtBytes(status.chunkBytes)}</>
           : <><span>MTPROTO OFFLINE</span>{status?.error ? `: ${status.error}` : ""}</>}
+        <a
+          href={botUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="statusbar-bot-link"
+          title={`Open Telegram bot ${botHandle}`}
+        >
+          <TelegramIcon size={13} />
+          <span>{botHandle}</span>
+        </a>
         <VoxideTelemetryBadge />
         <button className="ghost storage-link" onClick={() => setModal({ type: "scan" })}>
           <ShieldIcon /> Repair &amp; Scan

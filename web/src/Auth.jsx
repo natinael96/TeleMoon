@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { api, token, savedUser } from "./api.js";
-import { Crescent } from "./icons.jsx";
+import { Crescent, TelegramIcon } from "./icons.jsx";
 import AuthCanvas from "./AuthCanvas.jsx";
 
 export default function Auth({ onAuth }) {
@@ -13,6 +13,9 @@ export default function Auth({ onAuth }) {
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const handleRef = useRef(null);
+
+  const botHandle = st?.botUsername ? `@${st.botUsername.replace(/^@/, "")}` : "@Telemoon2bot";
+  const botUrl = `https://t.me/${botHandle.replace(/^@/, "")}`;
 
   useEffect(() => {
     api.publicStatus().then(setSt).catch(() => {});
@@ -59,9 +62,21 @@ export default function Auth({ onAuth }) {
 
       {/* Left side: Editorial / Written content */}
       <section className="landing-left">
-        <div className="landing-brand">
-          <Crescent size={28} />
-          <span>TeleMoon</span>
+        <div className="landing-top-bar">
+          <div className="landing-brand">
+            <Crescent size={28} />
+            <span>TeleMoon</span>
+          </div>
+          <a
+            href={botUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bot-badge"
+            title={`Open ${botHandle} on Telegram`}
+          >
+            <TelegramIcon size={14} />
+            <span>{botHandle}</span>
+          </a>
         </div>
 
         <div className="left-content">
@@ -76,7 +91,18 @@ export default function Auth({ onAuth }) {
               <span className="feature-num">01</span>
               <div className="feature-info">
                 <h3>Private Channel Storage</h3>
-                <p>Telegram stores your files. You keep full ownership of the channel.</p>
+                <p>
+                  Telegram stores your files. Create a private channel and add{" "}
+                  <a
+                    href={botUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="accent-link"
+                  >
+                    <b>{botHandle}</b>
+                  </a>{" "}
+                  as admin to start storing. You keep full ownership.
+                </p>
               </div>
             </div>
 
@@ -100,6 +126,16 @@ export default function Auth({ onAuth }) {
 
         <footer className="left-foot">
           <span>TeleMoon</span>
+          <a
+            href={botUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bot-foot-link"
+            title={`Open ${botHandle} on Telegram`}
+          >
+            <TelegramIcon size={13} />
+            <span>Telegram Bot: {botHandle}</span>
+          </a>
           <span>Telegram Virtual File System</span>
         </footer>
       </section>

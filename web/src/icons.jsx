@@ -95,6 +95,15 @@ export const LockIcon = (p) => (
 export const ShieldIcon = (p) => (
   <S {...p}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></S>
 );
+export const TelegramIcon = (p) => (
+  <S {...p}><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></S>
+);
+export const CopyIcon = (p) => (
+  <S {...p}><rect x="9" y="9" width="13" height="13" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></S>
+);
+export const CheckIcon = (p) => (
+  <S {...p}><polyline points="20 6 9 17 4 12" /></S>
+);
 
 
 export function iconFor(node) {

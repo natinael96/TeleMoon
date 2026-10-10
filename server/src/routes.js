@@ -92,6 +92,7 @@ api.get("/health", (_req, res) => res.json({ ok: true }));
 api.get("/public-status", (_req, res) => {
   res.json({
     users: q(`SELECT COUNT(*) c FROM users`).get().c,
+    botUsername: tg.botUsername || cfg.botUsername || "Telemoon2bot",
   });
 });
 
@@ -100,6 +101,7 @@ api.get("/status", auth, (req, res) => {
   res.json({
     telegram: !tg.ready ? "offline" : storage ? "connected" : "unlinked",
     mode: tg.mode,
+    botUsername: tg.botUsername || cfg.botUsername || "Telemoon2bot",
     channel: storage?.channel_title || null,
     storageId: storage?.id || null,
     storageUpdatedAt: storage?.updated_at || null,

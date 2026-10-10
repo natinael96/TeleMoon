@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api, savedUser } from "./api.js";
-import { Crescent, LinkIcon, MegaphoneIcon, UsersIcon } from "./icons.jsx";
+import { Crescent, LinkIcon, MegaphoneIcon, UsersIcon, TelegramIcon, CopyIcon, CheckIcon } from "./icons.jsx";
 
 // Link a storage channel: paste a private t.me/+ link (user session joins it),
 // an @name, or a -100 id, or select from channels this account already has.
@@ -10,7 +10,24 @@ export default function Connect({ status, canSkip, onDone, onLogout }) {
   const [err, setErr] = useState("");
   const [dialogs, setDialogs] = useState(null);
   const [dlgErr, setDlgErr] = useState("");
+  const [copiedHandle, setCopiedHandle] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
   const offline = !status.mode; // no Telegram client at all
+
+  const botHandle = status?.botUsername ? `@${status.botUsername.replace(/^@/, "")}` : "@Telemoon2bot";
+  const botUrl = `https://t.me/${botHandle.replace(/^@/, "")}`;
+
+  function copyHandle() {
+    navigator.clipboard?.writeText(botHandle);
+    setCopiedHandle(true);
+    setTimeout(() => setCopiedHandle(false), 2000);
+  }
+
+  function copyLink() {
+    navigator.clipboard?.writeText(botUrl);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
+  }
 
   useEffect(() => {
     if (offline) return;
@@ -47,11 +64,64 @@ export default function Connect({ status, canSkip, onDone, onLogout }) {
       <div className="connect-main">
         <span className="section-label">STORAGE SETUP</span>
         <h1>Link Telegram Storage</h1>
-        <p>
+        <p className="connect-subtitle">
           {canSkip
             ? <>Currently linked to <b>{status.channel}</b>. Switching channels does not move files already stored there.</>
-            : "Select a private Telegram channel to store your files."}
+            : "Point TeleMoon at a private Telegram channel. That is where your files will live."}
         </p>
+
+        {/* Dedicated Bot Callout Card */}
+        <div className="bot-callout">
+          <div className="bot-callout-info">
+            <div className="bot-callout-icon">
+              <TelegramIcon size={24} />
+            </div>
+            <div className="bot-callout-text">
+              <span className="bot-callout-label">REQUIRED TELEGRAM BOT</span>
+              <div className="bot-callout-name">
+                <a
+                  href={botUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bot-name-link"
+                >
+                  {botHandle}
+                </a>
+              </div>
+              <p className="bot-callout-desc">
+                Add <b>{botHandle}</b> as an administrator with posting rights to your private channel.
+              </p>
+            </div>
+          </div>
+          <div className="bot-callout-actions">
+            <button
+              type="button"
+              className="btn ghost bot-copy-btn"
+              onClick={copyHandle}
+              title={`Copy handle ${botHandle}`}
+            >
+              {copiedHandle ? <CheckIcon size={14} /> : <CopyIcon size={14} />}
+              <span>{copiedHandle ? "Handle Copied" : "Copy @Handle"}</span>
+            </button>
+            <button
+              type="button"
+              className="btn ghost bot-copy-btn"
+              onClick={copyLink}
+              title={`Copy bot link: ${botUrl}`}
+            >
+              {copiedLink ? <CheckIcon size={14} /> : <CopyIcon size={14} />}
+              <span>{copiedLink ? "Link Copied" : "Copy Link"}</span>
+            </button>
+            <a
+              href={botUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-moon bot-action-btn"
+            >
+              Open in Telegram ↗
+            </a>
+          </div>
+        </div>
 
         {offline ? (
           <div className="notice-box">
@@ -67,7 +137,7 @@ export default function Connect({ status, canSkip, onDone, onLogout }) {
             <input
               value={link}
               onChange={(e) => setLink(e.target.value)}
-              placeholder="Paste channel link, @handle, or chat ID"
+              placeholder="Paste channel post link (e.g. https://t.me/c/1234567890/1), @channel, or chat ID"
               spellCheck={false} autoFocus
             />
             <button className="btn btn-moon" disabled={busy || !link.trim()}>
@@ -77,29 +147,50 @@ export default function Connect({ status, canSkip, onDone, onLogout }) {
         )}
         {err && <p className="auth-err" role="alert">{err}</p>}
 
-        {!offline && status.mode === "bot" && (
-          <div className="connect-steps">
-            <h2>Setup Steps</h2>
-            <div className="steps-list">
-              <div className="step-item">
-                <span className="step-num">01</span>
-                <span>Create a private Telegram channel in your Telegram client.</span>
+        <div className="connect-steps">
+          <h2>How to connect your private channel</h2>
+          <div className="steps-list">
+            <div className="step-item">
+              <span className="step-num">01</span>
+              <div>
+                <strong>Create Private Channel</strong>
+                <p>Open Telegram and create a new private channel dedicated to your cloud storage.</p>
               </div>
-              <div className="step-item">
-                <span className="step-num">02</span>
-                <span>Add your TeleMoon bot as a channel administrator.</span>
+            </div>
+            <div className="step-item">
+              <span className="step-num">02</span>
+              <div>
+                <strong>Add {botHandle} as Admin</strong>
+                <p>
+                  In your channel settings, add{" "}
+                  <a
+                    href={botUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="accent-link"
+                  >
+                    <b>{botHandle}</b>
+                  </a>{" "}
+                  as an administrator with "Post Messages" permission.
+                </p>
               </div>
-              <div className="step-item">
-                <span className="step-num">03</span>
-                <span>Post any message in the channel, right-click, and select Copy Post Link.</span>
+            </div>
+            <div className="step-item">
+              <span className="step-num">03</span>
+              <div>
+                <strong>Copy a Post Link</strong>
+                <p>Send any test message into your channel, right-click (or tap) it, and choose "Copy Post Link".</p>
               </div>
-              <div className="step-item">
-                <span className="step-num">04</span>
-                <span>Paste the link into the field above and select Connect.</span>
+            </div>
+            <div className="step-item">
+              <span className="step-num">04</span>
+              <div>
+                <strong>Paste &amp; Connect</strong>
+                <p>Paste the copied post link into the box above and click Connect to link your storage.</p>
               </div>
             </div>
           </div>
-        )}
+        </div>
       </div>
 
       {!offline && status.mode !== "bot" && (
